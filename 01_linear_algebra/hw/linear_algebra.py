@@ -38,7 +38,11 @@ def vector_add(u: list[float], v: list[float]) -> list[float]:
         Think about how to iterate over two lists simultaneously, pairing
         their elements at each position.
     """
-    raise NotImplementedError("Implement vector_add()")
+    vector_sum=[]
+    for i in range(len(u)):
+        vector_sum.append(u[i] + v[i])
+    return vector_sum
+    
 
 
 def scalar_multiply(c: float, v: list[float]) -> list[float]:
@@ -59,7 +63,11 @@ def scalar_multiply(c: float, v: list[float]) -> list[float]:
         You know how to visit every element in a list. What would you do
         to each one?
     """
-    raise NotImplementedError("Implement scalar_multiply()")
+    scalar_multiply_list=[]
+    for i in range(len(v)):
+        scalar_multiply_list.append(c*v[i])
+    return scalar_multiply_list
+    
 
 
 def dot_product(u: list[float], v: list[float]) -> float:
@@ -83,7 +91,10 @@ def dot_product(u: list[float], v: list[float]) -> float:
         You already know how to pair elements from two lists. The dot product
         needs one more step: combine those products into a single number.
     """
-    raise NotImplementedError("Implement dot_product()")
+    vector_dot_product=0
+    for i in range(len(u)):
+        vector_dot_product += u[i] * v[i]
+    return vector_dot_product
 
 
 def vector_magnitude(v: list[float]) -> float:
@@ -105,7 +116,11 @@ def vector_magnitude(v: list[float]) -> float:
         Look at the formula in the docstring — it expresses magnitude in terms
         of an operation you've already implemented.
     """
-    raise NotImplementedError("Implement vector_magnitude()")
+    sum = 0
+    for i in v:
+        sum += i**2
+    return sum**(1/2)
+    
 
 
 def normalize_vector(v: list[float]) -> list[float]:
@@ -132,7 +147,13 @@ def normalize_vector(v: list[float]) -> list[float]:
         to be true about the magnitude before dividing, and what should happen
         if that condition fails.
     """
-    raise NotImplementedError("Implement normalize_vector()")
+    magnitude = vector_magnitude(v)
+    if magnitude == 0:
+        raise ValueError
+    
+    scalar = 1 / magnitude
+    return scalar_multiply(scalar, v)
+    
 
 
 def matrix_add(A: list[list[float]], B: list[list[float]]) -> list[list[float]]:
@@ -156,7 +177,14 @@ def matrix_add(A: list[list[float]], B: list[list[float]]) -> list[list[float]]:
         You have a function that adds two vectors. How could you apply it
         to each pair of corresponding rows?
     """
-    raise NotImplementedError("Implement matrix_add()")
+    matrix_sum = []
+    
+    for i in range(len(A)):
+        new_row=[]  
+        for j in range(len(A[i])):
+            new_row.append(A[i][j] + B[i][j])
+        matrix_sum.append(new_row)
+    return matrix_sum
 
 
 def matrix_vector_multiply(A: list[list[float]], v: list[float]) -> list[float]:
@@ -182,7 +210,43 @@ def matrix_vector_multiply(A: list[list[float]], v: list[float]) -> list[float]:
         computes exactly what each output element requires — apply it across the
         rows.
     """
-    raise NotImplementedError("Implement matrix_vector_multiply()")
+    matrix_vector_product = []
+    
+    for i in A:
+        matrix_vector_product.append(dot_product(i,v))
+    return matrix_vector_product
+            
+        
+
+    
+def matrix_transpose(A: list[list[float]]) -> list[list[float]]:
+    """Return the transpose of matrix A.
+
+    The transpose swaps rows and columns: T[i][j] = A[j][i].
+
+    Args:
+        A: A matrix with shape (m, n).
+
+    Returns:
+        The transposed matrix with shape (n, m).
+
+    Example:
+        >>> matrix_transpose([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+        [[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]]
+
+    Hint:
+        Python's `zip` function can be surprisingly useful here. Think about
+        what happens when you pass a list of lists as separate arguments — try
+        it on a small example in the REPL.
+    """
+    zipped_tuples = zip(*A)
+    list_of_tuples=list(zipped_tuples)
+    list_of_lists=[]
+    for i in range(len(list_of_tuples)):
+        list_of_lists.append(list(list_of_tuples[i]))
+    return(list_of_lists)
+    
+
 
 
 def matrix_multiply(A: list[list[float]], B: list[list[float]]) -> list[list[float]]:
@@ -208,30 +272,16 @@ def matrix_multiply(A: list[list[float]], B: list[list[float]]) -> list[list[flo
         could turn columns into something easier to work with — you've already
         implemented it.
     """
-    raise NotImplementedError("Implement matrix_multiply()")
+    matrix_multiplication_product = []
+    B_T = matrix_transpose(B)
+    for i in range(len(A)):
+            matrix_multiplication_product.append(matrix_vector_multiply(B_T, A[i]))
+
+    return matrix_multiplication_product
 
 
-def matrix_transpose(A: list[list[float]]) -> list[list[float]]:
-    """Return the transpose of matrix A.
 
-    The transpose swaps rows and columns: T[i][j] = A[j][i].
 
-    Args:
-        A: A matrix with shape (m, n).
-
-    Returns:
-        The transposed matrix with shape (n, m).
-
-    Example:
-        >>> matrix_transpose([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-        [[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]]
-
-    Hint:
-        Python's `zip` function can be surprisingly useful here. Think about
-        what happens when you pass a list of lists as separate arguments — try
-        it on a small example in the REPL.
-    """
-    raise NotImplementedError("Implement matrix_transpose()")
 
 
 # ── Part 2: PyTorch Tensors ───────────────────────────────────────────────────
@@ -261,7 +311,9 @@ def batch_dot(U: torch.Tensor, V: torch.Tensor) -> torch.Tensor:
         all the element-wise products at once, then how to collapse them
         into one number per row.
     """
-    raise NotImplementedError("Implement batch_dot()")
+    tensor_product = U*V
+    return tensor_product.sum(dim=1)
+    
 
 
 def polynomial_features(x: torch.Tensor, degree: int) -> torch.Tensor:
@@ -294,7 +346,10 @@ def polynomial_features(x: torch.Tensor, degree: int) -> torch.Tensor:
         can broadcast x and the exponent vector against each other —
         what shapes would make that work?
     """
-    raise NotImplementedError("Implement polynomial_features()")
+    exponent = torch.arange(degree+1)
+    polynomial_featured_matrix = x.unsqueeze(0).T ** exponent
+    return polynomial_featured_matrix
+    
 
 
 def row_normalize(A: torch.Tensor) -> torch.Tensor:
@@ -323,7 +378,15 @@ def row_normalize(A: torch.Tensor) -> torch.Tensor:
         think about whether the shapes are compatible — there is a
         keyword argument that controls this.
     """
-    raise NotImplementedError("Implement row_normalize()")
+    magnitude_tensor = batch_dot(A,A)
+    normalized_tensor = magnitude_tensor ** (1/2)
+    for element in normalized_tensor:
+        if element == 0:
+            raise ValueError
+    scalar_tensor = (normalized_tensor ** (-1)).unsqueeze(1)
+    row_normalized_tensor = A * scalar_tensor
+    return row_normalized_tensor
+    
 
 
 def cosine_similarity(u: torch.Tensor, v: torch.Tensor) -> float:
@@ -356,8 +419,22 @@ def cosine_similarity(u: torch.Tensor, v: torch.Tensor) -> float:
         Each term in the formula maps to a PyTorch operation.
         Handle the case where either input is the zero vector.
     """
-    raise NotImplementedError("Implement cosine_similarity()")
 
+    if torch.dot(u,u) == 0 or torch.dot(v,v) == 0:
+        raise ValueError
+    
+    numerator = torch.dot(u,v)
+    denominator_u = torch.dot(u,u) ** (1/2)
+    denominator_v = torch.dot(v,v) ** (1/2)
+    denominator = denominator_u * denominator_v
+    return (float(numerator/denominator))
+
+
+def distance(u: torch.Tensor, v: torch.Tensor) -> float:
+    difference = u-v
+    square = difference ** 2
+    distance = square.sum() ** (1/2)
+    return distance
 
 def pairwise_distances(A: torch.Tensor) -> torch.Tensor:
     """Compute the pairwise Euclidean distance between every row of A.
@@ -388,7 +465,14 @@ def pairwise_distances(A: torch.Tensor) -> torch.Tensor:
         line up correctly for all i and j simultaneously?
         Do not use torch.cdist.
     """
-    raise NotImplementedError("Implement pairwise_distances()")
+    m = len(A)
+    result = torch.zeros((m, m))
+
+    for i in range(m):
+        for j in range(m):
+            result[i][j] = distance(A[i],A[j]).item()
+    return result
+    
 
 
 def least_squares(X: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
@@ -423,4 +507,7 @@ def least_squares(X: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         in torch.linalg that solves a linear system directly.
         Do not use .inverse().
     """
-    raise NotImplementedError("Implement least_squares()")
+    left = X.T @ X
+    right = X.T @ y
+    w = torch.linalg.solve(left,right)
+    return w

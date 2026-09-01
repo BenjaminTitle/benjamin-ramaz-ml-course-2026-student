@@ -40,6 +40,7 @@ def manual_gradient_quadratic(a: float, b: float, x_val: float) -> float:
         Apply the power rule to each term separately, then add.
         Recall: d/dx [c * x**n] = c * n * x**(n-1).
     """
+    return (2*a*x_val + b)
     raise NotImplementedError("Implement manual_gradient_quadratic()")
 
 
@@ -64,6 +65,7 @@ def manual_gradient_composite(x_val: float) -> float:
         Identify the outer function (something cubed) and inner function
         (x**2 + 1). Chain rule: d/dx outer(inner) = outer'(inner) * inner'.
     """
+    return(3*(x_val**2+1)*(2*x_val))
     raise NotImplementedError("Implement manual_gradient_composite()")
 
 

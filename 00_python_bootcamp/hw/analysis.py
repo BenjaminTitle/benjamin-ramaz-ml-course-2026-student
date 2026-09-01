@@ -9,6 +9,7 @@ After completing the functions, run this script to print your results:
 
 Use the printed output to answer the questions in writeup.md.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -33,7 +34,12 @@ def load_songs(path: Path) -> pd.DataFrame:
         >>> df.dtypes["year"]
         dtype('int64')
     """
-    raise NotImplementedError("Implement load_songs()")
+    df = pd.read_csv(path)
+    df["year"] = df["year"].astype(int)
+    df["weeks_on_chart"] = df["weeks_on_chart"].astype(int)
+    df["peak_position"] = df["peak_position"].astype(int)
+    df["streams_millions"] = df["streams_millions"].astype(float)
+    return df
 
 
 def top_charting_songs(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
@@ -53,7 +59,8 @@ def top_charting_songs(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
         >>> top["streams_millions"].is_monotonic_decreasing
         True
     """
-    raise NotImplementedError("Implement top_charting_songs()")
+    sorted_df = df.sort_values(by="streams_millions", ascending=False)
+    return sorted_df[:n]
 
 
 def avg_weeks_by_genre(df: pd.DataFrame) -> dict[str, float]:
@@ -70,6 +77,13 @@ def avg_weeks_by_genre(df: pd.DataFrame) -> dict[str, float]:
         >>> isinstance(avgs, dict)
         True
     """
+    averaged_dictionary = {}
+    for genre in df:
+        sum = 0
+        for index in genre:
+            sum += index["weeks_on_chart"]
+        dict[genre] = sum / len(genre)
+
     raise NotImplementedError("Implement avg_weeks_by_genre()")
 
 
@@ -121,9 +135,7 @@ if __name__ == "__main__":
     print("=== Top 10 Songs by Streams ===")
     top = top_charting_songs(df, n=10)
     for _, row in top.iterrows():
-        print(
-            f"  {row['title']} — {row['artist']} ({row['streams_millions']:.0f}M streams)"
-        )
+        print(f"  {row['title']} — {row['artist']} ({row['streams_millions']:.0f}M streams)")
 
     print("\n=== Average Weeks on Chart by Genre ===")
     avg_weeks = avg_weeks_by_genre(df)
