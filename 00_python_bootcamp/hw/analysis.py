@@ -77,14 +77,10 @@ def avg_weeks_by_genre(df: pd.DataFrame) -> dict[str, float]:
         >>> isinstance(avgs, dict)
         True
     """
-    averaged_dictionary = {}
-    for genre in df:
-        sum = 0
-        for index in genre:
-            sum += index["weeks_on_chart"]
-        dict[genre] = sum / len(genre)
+    averaged_dictionary = df.groupby("genre")["weeks_on_chart"].mean().to_dict()
 
-    raise NotImplementedError("Implement avg_weeks_by_genre()")
+    return averaged_dictionary
+
 
 
 def most_streamed_artist(df: pd.DataFrame) -> str:
@@ -103,8 +99,8 @@ def most_streamed_artist(df: pd.DataFrame) -> str:
         >>> isinstance(artist, str)
         True
     """
-    raise NotImplementedError("Implement most_streamed_artist()")
-
+    most_streamed_musician = df.groupby("artist")["streams_millions"].sum().idxmax()
+    return most_streamed_musician
 
 def hits_per_year(df: pd.DataFrame, max_position: int = 10) -> dict[int, int]:
     """Count songs with peak_position <= max_position, grouped by year.
@@ -123,7 +119,8 @@ def hits_per_year(df: pd.DataFrame, max_position: int = 10) -> dict[int, int]:
         >>> all(isinstance(k, int) for k in hits.keys())
         True
     """
-    raise NotImplementedError("Implement hits_per_year()")
+    hits = df[df["peak_position"] <= max_position]
+    return hits.groupby("year").size().to_dict()
 
 
 # ── Main: print results for writeup.md ────────────────────────────────────────
